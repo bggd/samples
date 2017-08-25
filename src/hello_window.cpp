@@ -5,9 +5,9 @@
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
 
-
 #include "../game_window/src/game_window.hpp"
 #include "../game_window/src/game_window.cpp"
+
 
 struct GameApp {
   gwin::GameWindow window;
