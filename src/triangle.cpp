@@ -27,6 +27,8 @@
 #include "../game_renderer/src/ogl/ogl.hpp"
 #include "../game_renderer/src/ogl/vbo.hpp"
 #include "../game_renderer/src/ogl/vbo.cpp"
+#include "../game_renderer/src/ogl/ibo.hpp"
+#include "../game_renderer/src/ogl/ibo.cpp"
 #include "../game_renderer/src/ogl/texture_2d.hpp"
 #include "../game_renderer/src/ogl/texture_2d.cpp"
 #include "../game_renderer/src/ogl/shader_glsl.hpp"
