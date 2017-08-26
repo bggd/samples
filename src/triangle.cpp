@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include <assert.h>
+#include <math.h>
 #include <vector>
 
 #include "../game_window/src/game_window.hpp"
