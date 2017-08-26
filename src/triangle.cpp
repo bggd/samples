@@ -62,9 +62,7 @@ void game_loop(void* arg)
 
   glClear(GL_COLOR_BUFFER_BIT);
 
-  if (!grndr::ogl::Info::gles) { glBindVertexArray(VAO); }
   app->renderer.draw_triangles(0, 3);
-  if (!grndr::ogl::Info::gles) { glBindVertexArray(0); }
 
   app->window.flip();
 
@@ -110,7 +108,7 @@ int main(int argc, char** argv)
 
   if (!grndr::ogl::Info::gles) {
     glGenVertexArrays(1, &VAO);
-    glBindVertexArray(0);
+    glBindVertexArray(VAO);
   }
 
   glViewport(0, 0, 640, 480);
