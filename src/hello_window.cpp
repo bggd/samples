@@ -1,12 +1,25 @@
 #ifdef __EMSCRIPTEN__
+
 #include <emscripten.h>
-#endif
+#define GL_GLEXT_PROTOTYPES
+#include <GLFW/glfw3.h>
+#define GAME_WINDOW_GLFW3
+
+#else
 
 #define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
+#define GAME_WINDOW_SDL2
 
-#include "../game_window/src/game_window.hpp"
-#include "../game_window/src/game_window.cpp"
+#define MYGLLOADER_DEBUG
+#include "../my_gl_loader/src/my_gl_loader.hpp"
+#include "../my_gl_loader/src/my_gl_loader.cpp"
+
+#endif
+
+
+#define GAME_WINDOW_IMPLEMENTATION
+#include "../game_window/src/gwin.hpp"
 
 
 struct GameApp {
@@ -19,16 +32,20 @@ void game_loop(void* arg)
 {
   GameApp* app = static_cast<GameApp*>(arg);
 
+#ifdef GAME_WINDOW_SDL2
   SDL_Event ev;
   while (SDL_PollEvent(&ev)) {
     if (ev.type == SDL_QUIT) { app->running = false; }
   }
 
   if (!app->running) { exit(0); }
+#endif
 
   app->window.flip();
 
+#ifdef GAME_WINDOW_SDL2
   if (!app->on_emscripten) { SDL_Delay(20); }
+#endif
 }
 
 
@@ -58,8 +75,10 @@ int main(int argc, char** argv)
   GameApp app;
   app.running = true;
 
+#ifdef GAME_WINDOW_SDL2
   SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
   SDL_Init(SDL_INIT_VIDEO);
+#endif
 
   if (!app.window.open("hello window!", opt)) { return 1; }
 

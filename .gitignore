@@ -7,3 +7,4 @@ my_gl_loader
 *.html
 *.js
 *.wasm
+tags

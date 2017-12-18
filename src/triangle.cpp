@@ -1,43 +1,36 @@
-#ifdef __EMSCRIPTEN__
-#include <emscripten.h>
-#endif
-
-#define SDL_MAIN_HANDLED
-#include <SDL2/SDL.h>
-
 #include <stdio.h>
 #include <assert.h>
 #include <math.h>
 #include <vector>
 
-#include "../game_window/src/game_window.hpp"
-#include "../game_window/src/game_window.cpp"
+#ifdef __EMSCRIPTEN__
 
-#if !defined(__EMSCRIPTEN__)
+#include <emscripten.h>
+#define GL_GLEXT_PROTOTYPES
+#include <GLFW/glfw3.h>
+#define GAME_WINDOW_GLFW3
+
+#else
+
+#define SDL_MAIN_HANDLED
+#include <SDL2/SDL.h>
+#define GAME_WINDOW_SDL2
+
 #define MYGLLOADER_DEBUG
-#endif
 #include "../my_gl_loader/src/my_gl_loader.hpp"
 #include "../my_gl_loader/src/my_gl_loader.cpp"
 
-#include "../game_math/src/vec4.hpp"
-#include "../game_math/src/vec4.cpp"
-#include "../game_math/src/mat4.hpp"
-#include "../game_math/src/mat4.cpp"
+#endif
 
-#include "../game_renderer/src/ogl/ogl.hpp"
-#include "../game_renderer/src/ogl/vbo.hpp"
-#include "../game_renderer/src/ogl/vbo.cpp"
-#include "../game_renderer/src/ogl/ibo.hpp"
-#include "../game_renderer/src/ogl/ibo.cpp"
-#include "../game_renderer/src/ogl/texture_2d.hpp"
-#include "../game_renderer/src/ogl/texture_2d.cpp"
-#include "../game_renderer/src/ogl/shader_glsl.hpp"
-#include "../game_renderer/src/ogl/shader_glsl.cpp"
 
-#include "../game_renderer/src/pipeline_spec.hpp"
-#include "../game_renderer/src/pipeline_spec.cpp"
-#include "../game_renderer/src/renderer.hpp"
-#include "../game_renderer/src/renderer.cpp"
+#define GAME_WINDOW_IMPLEMENTATION
+#include "../game_window/src/gwin.hpp"
+
+#define GAME_MATH_IMPLEMENTATION
+#include "../game_math/src/gmath.hpp"
+
+#define GAME_RENDERER_IMPLEMENTATION
+#include "../game_renderer/src/grndr.hpp"
 
 
 static GLuint VAO;
@@ -56,12 +49,14 @@ void game_loop(void* arg)
 {
   GameApp* app = static_cast<GameApp*>(arg);
 
+#ifdef GAME_WINDOW_SDL2
   SDL_Event ev;
   while (SDL_PollEvent(&ev)) {
     if (ev.type == SDL_QUIT) { app->running = false; }
   }
 
   if (!app->running) { exit(0); }
+#endif
 
   glClear(GL_COLOR_BUFFER_BIT);
 
@@ -69,7 +64,9 @@ void game_loop(void* arg)
 
   app->window.flip();
 
+#ifdef GAME_WINDOW_SDL2
   if (!app->on_emscripten) { SDL_Delay(20); }
+#endif
 }
 
 
@@ -99,15 +96,19 @@ int main(int argc, char** argv)
   GameApp app;
   app.running = true;
 
+#ifdef GAME_WINDOW_SDL2
   SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
   SDL_Init(SDL_INIT_VIDEO);
+#endif
 
   if (!app.window.open("hello window!", opt)) { return 1; }
   opt = app.window.get_info();
   grndr::ogl::make_current(opt.gles, opt.major, opt.minor);
 
+#ifdef GAME_WINDOW_SDL2
   my_gl_loader();
   my_gl_loader_enable_debug_output();
+#endif
 
   if (!grndr::ogl::Info::gles) {
     glGenVertexArrays(1, &VAO);
