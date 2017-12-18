@@ -4,3 +4,6 @@ game_window
 game_math
 game_renderer
 my_gl_loader
+*.html
+*.js
+*.wasm
