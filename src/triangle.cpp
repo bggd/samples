@@ -138,12 +138,13 @@ int main(int argc, char** argv)
   grndr::ogl::VBO::bind_zero();
 
   app.spec = grndr::PipelineSpec::get_default_2d();
-  app.spec->compile_shader();
+  assert(app.spec->compile_shader());
 
-  app.renderer.set_pipeline(*app.spec);
+  app.renderer.set_vbo(0, app.vbo);
+  app.renderer.bind_pipeline(app.spec);
+  app.renderer.bind_vertex_attributes(app.spec);
   app.renderer.set_uniform_matrix4(app.spec->uniforms[0], gmath::mat4::ortho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f).elements);
   app.tex.bind();
-  app.renderer.set_vbo(0, app.vbo);
  
 #ifdef __EMSCRIPTEN__
   emscripten_set_main_loop_arg(game_loop, &app, 0, 1);
